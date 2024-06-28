@@ -127,7 +127,7 @@ export default function Component() {
           </nav>
         </div>
       </header>
-      <main className="flex-1 grid grid-cols-1 md: grid-cols-2 lg:grid-cols-2  gap-6 p-6 bg-[#ECF2FF]">
+      <main className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-[#ECF2FF]">
         <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
           <Badge className="bg-[#836FFF] text-white">Template ✏️</Badge>
           <div className="flex items-center space-x-4">
@@ -185,7 +185,7 @@ export default function Component() {
           <Badge className="bg-[#836FFF]"> Email ✉️ </Badge>
 
           <div className="border rounded-lg p-4 text-[#202124] bg-[#FBFACD]">
-            {loadingGeneration ? (
+            {loadingGeneration || !engine ? (
               <ThreeDots
                 visible={true}
                 height="20"
