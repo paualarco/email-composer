@@ -1,7 +1,6 @@
 "use client";
-import Link from "next/link";
+import { FaGithub } from "react-icons/fa";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -80,7 +79,6 @@ export default function Component() {
 
   const handleGenerateEmail = useCallback(async () => {
     if (engine) {
-      console.log("Generating email...");
       setLoadingGeneration(true);
       const messages: webllm.ChatCompletionMessageParam[] = [
         {
@@ -117,26 +115,19 @@ export default function Component() {
           <h1 className="text-2xl font-bold">✨ Magic Email Composer ✨</h1>
           <nav>
             <ul className="flex items-center space-x-4">
-              <li>
-                <Link href="#" className="hover:text-white/80" prefetch={false}>
-                  Templates
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white/80" prefetch={false}>
-                  Drafts
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white/80" prefetch={false}>
-                  Settings
-                </Link>
-              </li>
+              {" "}
+              <a
+                href="https://github.com/paualarco/magic-email-composer"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <FaGithub size={25} />
+              </a>
             </ul>
           </nav>
         </div>
       </header>
-      <main className="flex-1 grid grid-cols-2 gap-6 p-6 bg-[#ECF2FF]">
+      <main className="flex-1 grid grid-cols-1 md: grid-cols-2 lg:grid-cols-2  gap-6 p-6 bg-[#ECF2FF]">
         <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
           <Badge className="bg-[#836FFF] text-white">Template ✏️</Badge>
           <div className="flex items-center space-x-4">
@@ -164,7 +155,7 @@ export default function Component() {
               <Textarea
                 id="email-content"
                 placeholder="Compose your email or explain what you need..."
-                className="w-full h-[150px] resize-none bg-[#FBFACD] rounded-lg "
+                className="w-full h-[120px] resize-none bg-[#FBFACD] rounded-lg "
                 onChange={handleBodyChange}
               />
             </div>
