@@ -111,7 +111,7 @@ export default function Component() {
   return (
     <div className="flex flex-col h-screen">
       <header className="border-b-4  bg-[#FFB0FE] text-black py-4 px-6 shadow">
-        <div className="container mx-auto flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between justify-center">
           <h1 className="text-2xl font-bold">✨ Magic Email Composer ✨</h1>
           <nav>
             <ul className="flex items-center space-x-4">
