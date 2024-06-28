@@ -53,6 +53,7 @@ export default function Component() {
 
   const [progress, setProgress] = useState(13);
 
+  const [hasWebGPU, setHasWebGPU] = useState(true);
   useEffect(() => {
     const timer = setTimeout(() => setProgress(66), 500);
     return () => clearTimeout(timer);
@@ -67,8 +68,10 @@ export default function Component() {
         });
         // Save engine to state if needed
         setEngine(engine);
+        setHasWebGPU(true);
       } catch (error) {
         console.error("Error initializing engine:", error);
+        setHasWebGPU(false);
         // Handle error
       }
     }
@@ -163,16 +166,22 @@ export default function Component() {
             </div>
           </div>
           {!engine ? (
-            <div className="flex flex-col items-center justify-center">
-              <Progress
-                className={"bg-gray-50 h-2 w-1/3"}
-                value={progress}
-                fill="black"
-              />
-              <div className="flex flex-row items-end gap-1">
-                <div>Loading model... </div>
+            hasWebGPU ? (
+              <div className="flex flex-col items-center justify-center">
+                <Progress
+                  className={"bg-gray-50 h-2 w-1/3"}
+                  value={progress}
+                  fill="black"
+                />
+                <div className="flex flex-row items-end gap-1">
+                  <div>Loading model... </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col font-bold items-center justify-center text-red-500">
+                WebLLMs are not supported in this device.
+              </div>
+            )
           ) : (
             <Button
               className="border w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
