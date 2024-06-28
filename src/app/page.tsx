@@ -12,33 +12,57 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useState } from "react";
+import {
+  ChangeEventHandler,
+  use,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 // Import everything
 import * as webllm from "@mlc-ai/web-llm";
 // Or only import what you need
 import { CreateMLCEngine } from "@mlc-ai/web-llm";
+import { Box } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { ThreeDots } from "react-loader-spinner";
 // $c-black: #000000;
 // $c-white: #FFFFFF;
 // $c-primary: #EFE5FC;
 // $c-primary-strong: #6101EA;
 export default function Component() {
-  const [subject, setSubject] = useState("");
+  const [generatedEmail, setGeneratedEmail] = useState(
+    "Click 'Generate' to get started!"
+  );
+  const [body, setBody] = useState("");
+  const [tone, setTone] = useState("neutral");
 
-  // Step 4: Handle input changes
-  const handleSubjectChange = (e) => {
-    setSubject(e.target.value);
+  const handleBodyChange = (e: any) => {
+    e && setBody(e.target.value);
   };
-  const initProgressCallback = (initProgress) => {
-    console.log(initProgress);
+
+  const handleOnToneChange = (value: any) => {
+    console.log("Handle tone change: ", value);
+    setTone(value);
+  };
+  const initProgressCallback = (initProgres: any) => {
+    console.log(initProgres);
   };
   const selectedModel = "Llama-3-8B-Instruct-q4f32_1-MLC";
 
   const [engine, setEngine] = useState<webllm.MLCEngine>();
 
+  const [progress, setProgress] = useState(13);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(66), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     async function initializeEngine() {
       try {
-        const selectedModel = "Llama-3-8B-Instruct-q4f32_1-MLC";
+        // Initialize engine
         const engine = await CreateMLCEngine(selectedModel, {
           initProgressCallback: initProgressCallback,
         });
@@ -51,32 +75,44 @@ export default function Component() {
     }
     initializeEngine();
   }, []);
-  const messages = [
-    { role: "system", content: "You are a helpful AI assistant." },
-    { role: "user", content: "Hello!" },
-  ];
 
-  // const [generatedEmail, setGeneratedEmail] = useState("");
+  const [loadingGeneration, setLoadingGeneration] = useState(false);
 
   const handleGenerateEmail = useCallback(async () => {
     if (engine) {
       console.log("Generating email...");
+      setLoadingGeneration(true);
+      const messages: webllm.ChatCompletionMessageParam[] = [
+        {
+          role: "system",
+          content: `You are a Email Composer. You only respond with the composed email, nothing else.`,
+        },
+        {
+          role: "user",
+          content: `Write a concise email (add a break line between Subject and Body) using in ${tone} tone based on the following: ${body} `,
+        },
+      ];
+
       const reply = await engine.chat.completions.create({
-        messages,
+        messages: messages,
       });
+      setLoadingGeneration(false);
+
       const response = reply.choices[0].message;
-      console.log("response: ", response);
+      setGeneratedEmail(response.content ?? "");
+      console.log(`response from input ${body} `, response);
       console.log(reply.usage);
       // setGeneratedEmail(response.content);
+    } else {
+      console.log("Engine not ready");
     }
-    console.log("Engine not ready");
-  }, [engine, messages]);
+  }, [engine, body, tone]);
 
   const headColour = "#F875AA";
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-[#F875AA] text-white py-4 px-6 shadow">
+      <header className="border-b-4  bg-[#FFB0FE] text-black py-4 px-6 shadow">
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold">✨ Magic Email Composer ✨</h1>
           <nav>
@@ -100,85 +136,82 @@ export default function Component() {
           </nav>
         </div>
       </header>
-      <main className="flex-1 grid grid-cols-2 gap-6 p-6 bg-[#83A2FF]">
-        <div className="bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
-          <Badge className="bg-[#836FFF] text-white">Template</Badge>
+      <main className="flex-1 grid grid-cols-2 gap-6 p-6 bg-[#ECF2FF]">
+        <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
+          <Badge className="bg-[#836FFF] text-white">Template ✏️</Badge>
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="tone">Tone</Label>
+            <div className="border rounded-lg">
+              <Select defaultValue="neutral" onValueChange={handleOnToneChange}>
+                <SelectTrigger className="w-40 bg-[#FBFACD] rounded-lg">
+                  <SelectValue placeholder="Select tone" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="neutral">Neutral</SelectItem>
+                  <SelectItem value="formal">Formal</SelectItem>
+                  <SelectItem value="casual">Casual</SelectItem>
+                  <SelectItem value="friendly">Friendly</SelectItem>
+                  <SelectItem value="professional">Professional</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="recipient">To:</Label>
-            <Input
-              className="bg-[#FBFACD]"
-              id="recipient"
-              type="email"
-              placeholder="recipient@example.com"
-            />
+          <div className="gap-4">
+            <Label htmlFor="tone">Content</Label>
+
+            <div className="border rounded-lg">
+              <Textarea
+                id="email-content"
+                placeholder="Compose your email or explain what you need..."
+                className="w-full h-[150px] resize-none bg-[#FBFACD] rounded-lg "
+                onChange={handleBodyChange}
+              />
+            </div>
           </div>
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="subject">Subject:</Label>
-            <Input
-              id="subject"
-              className="bg-[#FBFACD]"
-              type="text"
-              placeholder="Email subject"
-              value={subject}
-              onChange={handleSubjectChange}
-            />
-          </div>
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="tone">Tone:</Label>
-            <Select id="tone" defaultValue="neutral">
-              <SelectTrigger className="w-40 bg-[#FBFACD]">
-                <SelectValue placeholder="Select tone" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="neutral">Neutral</SelectItem>
-                <SelectItem value="formal">Formal</SelectItem>
-                <SelectItem value="casual">Casual</SelectItem>
-                <SelectItem value="friendly">Friendly</SelectItem>
-                <SelectItem value="professional">Professional</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <Textarea
-            id="email-content"
-            placeholder="Compose your email here..."
-            className="w-full h-[300px] resize-none bg-[#FBFACD]"
-          />
-          <Button
-            className="w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
-            onClick={handleGenerateEmail}
-          >
-            Generate Email
-          </Button>
+          {!engine ? (
+            <div className="flex flex-col items-center justify-center">
+              <Progress
+                className={"bg-gray-50 h-2 w-1/3"}
+                value={progress}
+                fill="black"
+              />
+              <div className="flex flex-row items-end gap-1">
+                <div>Loading model... </div>
+              </div>
+            </div>
+          ) : (
+            <Button
+              className="border w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
+              onClick={handleGenerateEmail}
+              disabled={loadingGeneration}
+            >
+              Generate 🪄
+            </Button>
+          )}
         </div>
-        <div className="bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
-          <Badge className="bg-[#836FFF]">Generated Email</Badge>
-          <h2 className="text-2xl font-bold">{subject}</h2>
+        <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
+          <Badge className="bg-[#836FFF]"> Email ✉️ </Badge>
 
           <div className="border rounded-lg p-4 text-[#202124] bg-[#FBFACD]">
-            <p>Dear [Recipient],</p>
-            <p>
-              I hope this email finds you well. I wanted to reach out to discuss
-              [topic]. [Provide details and context].
-            </p>
-            <p>
-              Please let me know if you have any questions or if there is
-              anything else I can assist with.
-            </p>
-            <p>Best regards,</p>
-            <p>[Your Name]</p>
-          </div>
-          <div className="flex justify-end space-x-2">
-            <Button
-              disabled
-              className="bg-[#4285F4] text-white hover:bg-[#3367D6]"
-            >
-              Send
-            </Button>
+            {loadingGeneration ? (
+              <ThreeDots
+                visible={true}
+                height="20"
+                width="20"
+                color="black"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              generatedEmail
+            )}
           </div>
         </div>
       </main>
-      <footer className="bg-[#836FFF] text-white py-4 px-6 shadow">
+      <footer className="border-t-2 border-black bg-[#836FFF] text-white py-4 px-6 shadow">
         <div className="container mx-auto text-center text-sm">
           &copy; 2024 Magic Email Composer. All rights reserved.
         </div>
