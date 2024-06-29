@@ -184,7 +184,7 @@ export default function Component() {
                   />
                 </div>
               </div>
-              <div className="flex pt-10  flex-col items-center justify-center">
+              <div className="flex pt-5  flex-col items-center justify-center">
                 <Button
                   className="border w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
                   onClick={handleGenerateEmail}
@@ -219,7 +219,7 @@ export default function Component() {
       </main>
       <footer className="border-t-2 border-black bg-[#836FFF] text-white py-4 px-6 shadow">
         <div className="container mx-auto text-center text-sm">
-          &copy; 2024 Magic Email Composer. All rights reserved.
+          &copy; 2024 Magic Email Composer. MIT License.
         </div>
       </footer>
     </div>
