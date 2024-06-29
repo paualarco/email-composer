@@ -135,44 +135,11 @@ export default function Component() {
       <main className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-[#ECF2FF]">
         <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
           <Badge className="bg-[#836FFF] text-white">Template ✏️</Badge>
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="tone">Tone</Label>
-            <div className="border rounded-lg">
-              <Select defaultValue="neutral" onValueChange={handleOnToneChange}>
-                <SelectTrigger className="w-40 bg-[#FBFACD] rounded-lg">
-                  <SelectValue placeholder="Select tone" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="neutral">Neutral</SelectItem>
-                  <SelectItem value="formal">Formal</SelectItem>
-                  <SelectItem value="casual">Casual</SelectItem>
-                  <SelectItem value="friendly">Friendly</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
 
-          <div className="gap-4">
-            <Label htmlFor="tone">Content</Label>
-
-            <div className="border rounded-lg">
-              <Textarea
-                id="email-content"
-                placeholder="Compose your email or explain what you need..."
-                className="w-full h-[120px] resize-none bg-[#FBFACD] rounded-lg "
-                onChange={handleBodyChange}
-              />
-            </div>
-          </div>
           {!engine ? (
             hasWebGPU ? (
-              <div className="flex flex-col items-center justify-center">
-                <Progress
-                  className={"bg-gray-50 h-2 w-1/3"}
-                  value={progress}
-                  fill="black"
-                />
+              <div className="flex pt-10  flex-col items-center justify-center">
+                <Progress className={"bg-gray-50 h-2 w-1/3"} value={progress} />
                 <div className="flex flex-row items-end gap-1">
                   <div>Loading model... </div>
                 </div>
@@ -183,13 +150,50 @@ export default function Component() {
               </div>
             )
           ) : (
-            <Button
-              className="border w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
-              onClick={handleGenerateEmail}
-              disabled={loadingGeneration}
-            >
-              Generate 🪄
-            </Button>
+            <div>
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="tone">Tone</Label>
+                <div className="border rounded-lg">
+                  <Select
+                    defaultValue="neutral"
+                    onValueChange={handleOnToneChange}
+                  >
+                    <SelectTrigger className="w-40 bg-[#FBFACD] rounded-lg">
+                      <SelectValue placeholder="Select tone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="neutral">Neutral</SelectItem>
+                      <SelectItem value="formal">Formal</SelectItem>
+                      <SelectItem value="casual">Casual</SelectItem>
+                      <SelectItem value="friendly">Friendly</SelectItem>
+                      <SelectItem value="professional">Professional</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="gap-4">
+                <Label htmlFor="tone">Content</Label>
+
+                <div className="border rounded-lg">
+                  <Textarea
+                    id="email-content"
+                    placeholder="Compose your email or explain what you need..."
+                    className="w-full h-[120px] resize-none bg-[#FBFACD] rounded-lg "
+                    onChange={handleBodyChange}
+                  />
+                </div>
+              </div>
+              <div className="flex pt-10  flex-col items-center justify-center">
+                <Button
+                  className="border w-full bg-[#15F5BA] text-black hover:bg-[#91DDCF]"
+                  onClick={handleGenerateEmail}
+                  disabled={loadingGeneration}
+                >
+                  Generate 🪄
+                </Button>
+              </div>
+            </div>
           )}
         </div>
         <div className="border-l-2 border-t-2 border-b-4 border-r-4 bg-[#D0BFFF] rounded-lg shadow p-6 space-y-4">
