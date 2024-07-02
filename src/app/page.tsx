@@ -143,6 +143,10 @@ export default function Component() {
                 <div className="flex flex-row items-end gap-1">
                   <div>Loading model... </div>
                 </div>
+                <div className={"opacity-40 text-xs"}>
+                  {" "}
+                  Be patient, the first time can take some time to complete.
+                </div>
               </div>
             ) : (
               <div className="flex flex-col font-bold items-center justify-center text-red-500">
